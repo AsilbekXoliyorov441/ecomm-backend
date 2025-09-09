@@ -1,13 +1,12 @@
 {
-  "name": "ecommerce-beckend",
+  "name": "ecommerce-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
- "scripts": {
-  "start": "node server.js",
-  "dev": "nodemon server.js"
-}
-,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
