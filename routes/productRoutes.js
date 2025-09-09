@@ -38,7 +38,12 @@ const router = express.Router();
  *                   price:
  *                     type: number
  *                   category:
- *                     type: string
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       name:
+ *                         type: string
  *   post:
  *     summary: Create a new product
  *     tags: [Products]
@@ -51,6 +56,7 @@ const router = express.Router();
  *             required:
  *               - name
  *               - price
+ *               - categoryId
  *             properties:
  *               name:
  *                 type: string
@@ -58,9 +64,9 @@ const router = express.Router();
  *               price:
  *                 type: number
  *                 example: 1200
- *               category:
+ *               categoryId:
  *                 type: string
- *                 example: "Electronics"
+ *                 example: "66df8a77f1a2b3c4d5e6f7a8"
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -94,9 +100,9 @@ router.post("/", createProduct);
  *               price:
  *                 type: number
  *                 example: 1500
- *               category:
+ *               categoryId:
  *                 type: string
- *                 example: "Electronics"
+ *                 example: "66df8a77f1a2b3c4d5e6f7a8"
  *     responses:
  *       200:
  *         description: Product updated successfully

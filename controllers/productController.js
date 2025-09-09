@@ -1,9 +1,23 @@
 const Product = require("../models/Product");
+const Category = require("../models/Category"); // qo‘shib qo‘yish kerak
 
 // Create
 exports.createProduct = async (req, res) => {
   try {
-    const product = new Product(req.body);
+    const { name, price, categoryId } = req.body;
+
+    // category mavjudligini tekshirish
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    const product = new Product({
+      name,
+      price,
+      category: categoryId, // ID bo‘yicha saqlaymiz
+    });
+
     await product.save();
     res.status(201).json(product);
   } catch (err) {
@@ -20,9 +34,22 @@ exports.getProducts = async (req, res) => {
 // Update
 exports.updateProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const { name, price, categoryId } = req.body;
+
+    // category mavjudligini tekshirish
+    if (categoryId) {
+      const category = await Category.findById(categoryId);
+      if (!category) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { name, price, category: categoryId },
+      { new: true }
+    );
+
     res.json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
