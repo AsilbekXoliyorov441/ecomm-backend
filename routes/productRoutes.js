@@ -1,126 +1,32 @@
 const express = require("express");
+const router = express.Router();
+const upload = require("../middlewares/upload");
 const {
   createProduct,
   getProducts,
-  updateProduct,
+  getProduct,
+  toggleLike,
+  toggleCart,
+  toggleReturned,
+  rateProduct,
   deleteProduct,
 } = require("../controllers/productController");
 
-const router = express.Router();
+const { protect, requireAdmin } = require("../middlewares/authMiddleware");
 
-/**
- * @swagger
- * tags:
- *   name: Products
- *   description: Product management
- */
-
-/**
- * @swagger
- * /api/products:
- *   get:
- *     summary: Get all products
- *     tags: [Products]
- *     responses:
- *       200:
- *         description: List of products
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   price:
- *                     type: number
- *                   category:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                       name:
- *                         type: string
- *   post:
- *     summary: Create a new product
- *     tags: [Products]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - price
- *               - categoryId
- *             properties:
- *               name:
- *                 type: string
- *                 example: "iPhone 15"
- *               price:
- *                 type: number
- *                 example: 1200
- *               categoryId:
- *                 type: string
- *                 example: "66df8a77f1a2b3c4d5e6f7a8"
- *     responses:
- *       201:
- *         description: Product created successfully
- */
 router.get("/", getProducts);
-router.post("/", createProduct);
+router.get("/:id", getProduct);
 
-/**
- * @swagger
- * /api/products/{id}:
- *   put:
- *     summary: Update a product by ID
- *     tags: [Products]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Product ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *                 example: "Updated product"
- *               price:
- *                 type: number
- *                 example: 1500
- *               categoryId:
- *                 type: string
- *                 example: "66df8a77f1a2b3c4d5e6f7a8"
- *     responses:
- *       200:
- *         description: Product updated successfully
- *   delete:
- *     summary: Delete a product by ID
- *     tags: [Products]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: Product ID
- *     responses:
- *       200:
- *         description: Product deleted successfully
- */
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
+// create / delete product (admin)
+router.post("/", protect, requireAdmin, upload.array("images"), createProduct);
+router.delete("/:id", protect, requireAdmin, deleteProduct);
+
+// user actions
+router.post("/:id/like", protect, toggleLike);
+router.post("/:id/cart", protect, toggleCart);
+router.post("/:id/rate", protect, rateProduct);
+
+// admin action to toggle returned
+router.post("/:id/returned", protect, requireAdmin, toggleReturned);
 
 module.exports = router;
