@@ -44,9 +44,24 @@ const swaggerOptions = {
       description: "E-commerce backend API documentation",
     },
     servers: [{ url: BASE_URL }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
-  apis: [path.resolve(__dirname, "routes/*.js")], // absolute path
+  apis: [path.resolve(__dirname, "routes/*.js")],
 };
+
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
